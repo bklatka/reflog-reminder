@@ -1,0 +1,12 @@
+{
+  "name": "tempo-reminder",
+  "version": "1.0.0",
+  "dependencies": {
+    "shelljs": "^0.8.5",
+    "simple-git": "^3.10.0",
+    "zlib": "^1.0.5"
+  },
+  "scripts": {
+    "start": "node ./index.js"
+  }
+}
