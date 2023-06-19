@@ -1,29 +1,30 @@
 const execSync = require('child_process').execSync;
 const argv = require('minimist')(process.argv.slice(2));
-
-
-
-
-
-
 const monthChooser = require('./selectMonth');
+
+
+/**
+* Arguments
+ * --all: Shows all history
+ * --afterDate 2023-04-28: Shows history after specific date
+* */
 
 init();
 
 async function init() {
-    let selectedMonth = argv.month;
-    if (!selectedMonth) {
+    let selectedMonth;
+    if (!argv.afterDate && !argv.all) {
         selectedMonth = await monthChooser.selectMonth();
     }
 
     const output = extractReflog();
 
-    const NOT_BEFORE = `2023-${selectedMonth}-01`
-    const NOT_AFTER = `2023-${selectedMonth + 1}-01`
+    const NOT_BEFORE = argv.afterDate ?? `2023-${selectedMonth}-01`
+    const NOT_AFTER = !argv.afterDate ? `2023-${selectedMonth + 1}-01` : '3000-01-01';
 
     const checkoutsByDate = groupReflogCheckoutsByDate(output, {
-        dateFrom: NOT_BEFORE,
-        dateTo: NOT_AFTER,
+        dateFrom: argv.all ? null : NOT_BEFORE ,
+        dateTo: argv.all ? null : NOT_AFTER,
     });
 
 
@@ -38,13 +39,6 @@ async function init() {
         console.log(`Day: ${date}${daySummary}`);
     });
 }
-
-
-
-
-
-
-
 
 
 function sortDayEntries(dayData) {
@@ -88,6 +82,10 @@ function groupReflogCheckoutsByDate(reflogOutput, options) {
         return (message.toString()).includes("checkout") && !message.includes("rebase (start)");
     }).filter((data) => {
         const date = new Date(data.date[0]);
+
+        if (!dateFrom && !dateTo) {
+            return true;
+        }
 
         return  date.getTime() - new Date(dateFrom).getTime() >= 0 && date.getTime() - new Date(dateTo) <= 0;
     })
