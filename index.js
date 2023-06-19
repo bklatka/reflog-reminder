@@ -11,20 +11,20 @@ const monthChooser = require('./selectMonth');
 
 init();
 
-async function init() {
+async function init(afterDate = argv.afterDate, shouldShowAll = argv.all) {
     let selectedMonth;
-    if (!argv.afterDate && !argv.all) {
+    if (!afterDate && !shouldShowAll) {
         selectedMonth = await monthChooser.selectMonth();
     }
 
     const output = extractReflog();
 
-    const NOT_BEFORE = argv.afterDate ?? `2023-${selectedMonth}-01`
-    const NOT_AFTER = !argv.afterDate ? `2023-${selectedMonth + 1}-01` : '3000-01-01';
+    const NOT_BEFORE = afterDate ?? `2023-${selectedMonth}-01`
+    const NOT_AFTER = `2023-${selectedMonth + 1}-01`
 
     const checkoutsByDate = groupReflogCheckoutsByDate(output, {
-        dateFrom: argv.all ? null : NOT_BEFORE ,
-        dateTo: argv.all ? null : NOT_AFTER,
+        dateFrom: shouldShowAll ? null : NOT_BEFORE ,
+        dateTo: (shouldShowAll || afterDate) ? null : NOT_AFTER,
     });
 
 
@@ -85,6 +85,10 @@ function groupReflogCheckoutsByDate(reflogOutput, options) {
 
         if (!dateFrom && !dateTo) {
             return true;
+        }
+
+        if (!dateTo) {
+            return date.getTime() - new Date(dateFrom).getTime() >= 0;
         }
 
         return  date.getTime() - new Date(dateFrom).getTime() >= 0 && date.getTime() - new Date(dateTo) <= 0;
