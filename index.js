@@ -3,73 +3,101 @@ const execSync = require('child_process').execSync;
 
 
 
-const output = execSync('cd ../js-clients && git log --walk-reflogs --date=iso', { encoding: 'utf-8' });  // the default is 'buffer'
-
-const [_, ...commits] = output.split("Reflog:");
 
 
-const dateGroup = {};
+const monthChooser = require('./selectMonth');
 
-const NOT_BEFORE = "2023-06-01"
+monthChooser.selectMonth().then(month => {
+    const output = extractReflog();
 
-commits.map(commitData => {
-    const [id, message, author, date, _, commitMessage] = commitData.split('\n')
+    const NOT_BEFORE = `2023-${month}-01`
+    const NOT_AFTER = `2023-${month + 1}-01`
 
-    const dateOfReflog = id.match(/\{(.+)\}/g)[0].slice(1, -1)
+    const checkoutsByDate = groupReflogCheckoutsByDate(output, {
+        dateFrom: NOT_BEFORE,
+        dateTo: NOT_AFTER,
+    });
 
 
+    Object.entries(checkoutsByDate).sort((a,b) => {
+        // sort by day
+        return new Date(b[0]) - new Date(a[0]);
+    }).map(([date, dayData]) => {
+        sortDayEntries(dayData);
 
-    return {
-        id, message, date: dateOfReflog.split(' '), commitMessage
-    }
-}).filter((data, i) => {
-    const { message } = data;
+        const daySummary = generateDaySummary(dayData);
 
-    return (message.toString()).includes("checkout") && !message.includes("rebase (start)");
-}).filter((data) => {
-    const date = new Date(data.date[0]);
+        console.log(`Day: ${date}${daySummary}`);
+    });
 
-    return  date.getTime() - new Date(NOT_BEFORE).getTime() >= 0;
-})
-    .forEach(data => {
-    const targetCheckout = data.message.split(" to ")[1];
-
-    const dayOfMessage = data.date[0]
-
-    /* Create date property if doesnt exist */
-    if (!dateGroup[dayOfMessage]) {
-        dateGroup[dayOfMessage] = [];
-    }
-
-    dateGroup[dayOfMessage].push({ time: data.date[1], checkoutTo: targetCheckout })
 })
 
-Object.entries(dateGroup).sort((a,b) => {
-    return new Date(b[0]) - new Date(a[0]);
-}).map(([date, dayData]) => {
-    let lastEntry = "08:00:00";
 
+
+
+
+
+
+function sortDayEntries(dayData) {
     dayData.sort((a,b) => {
         const aTime = Number(a.time.split(":").join(''));
         const bTime = Number(b.time.split(":").join(''));
         return aTime - bTime;
     })
+}
 
-    const daySummary = dayData.reduce((report, timeData) => {
+function generateDaySummary(dayData) {
+    let lastEntry = "08:00:00";
+    return dayData.reduce((report, timeData) => {
         const newReport = `${report}
-        from\t${lastEntry} to\t${timeData.time}\t${timeData.checkoutTo}`
+        ${lastEntry}\t${timeData.time}\t${timeData.checkoutTo}`
 
         lastEntry = timeData.time;
 
         return newReport;
     }, "");
+}
 
-    console.log('\n');
-    console.log(`Day: ${date}${daySummary}`);
-});
+function groupReflogCheckoutsByDate(reflogOutput, options) {
+    const { dateFrom, dateTo } = options;
+    const dateGroup = {};
+
+    const [_, ...commits] = reflogOutput.split("Reflog:");
+    commits.map(commitData => {
+        const [id, message, author, date, _, commitMessage] = commitData.split('\n')
+
+        const dateOfReflog = id.match(/\{(.+)\}/g)[0].slice(1, -1)
 
 
-// console.log(`Found ${filtered.length} checkouts`);
 
+        return {
+            id, message, date: dateOfReflog.split(' '), commitMessage
+        }
+    }).filter((data, i) => {
+        const { message } = data;
 
+        return (message.toString()).includes("checkout") && !message.includes("rebase (start)");
+    }).filter((data) => {
+        const date = new Date(data.date[0]);
 
+        return  date.getTime() - new Date(dateFrom).getTime() >= 0 && date.getTime() - new Date(dateTo) <= 0;
+    })
+        .forEach(data => {
+            const targetCheckout = data.message.split(" to ")[1];
+
+            const dayOfMessage = data.date[0]
+
+            /* Create date property if doesnt exist */
+            if (!dateGroup[dayOfMessage]) {
+                dateGroup[dayOfMessage] = [];
+            }
+
+            dateGroup[dayOfMessage].push({ time: data.date[1], checkoutTo: targetCheckout })
+        })
+
+    return dateGroup;
+}
+
+function extractReflog() {
+    return execSync('cd ../js-clients && git log --walk-reflogs --date=iso', { encoding: 'utf-8' });  // the default is 'buffer'
+}
