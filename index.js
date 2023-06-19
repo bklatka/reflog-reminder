@@ -1,4 +1,5 @@
 const execSync = require('child_process').execSync;
+const argv = require('minimist')(process.argv.slice(2));
 
 
 
@@ -7,11 +8,18 @@ const execSync = require('child_process').execSync;
 
 const monthChooser = require('./selectMonth');
 
-monthChooser.selectMonth().then(month => {
+init();
+
+async function init() {
+    let selectedMonth = argv.month;
+    if (!selectedMonth) {
+        selectedMonth = await monthChooser.selectMonth();
+    }
+
     const output = extractReflog();
 
-    const NOT_BEFORE = `2023-${month}-01`
-    const NOT_AFTER = `2023-${month + 1}-01`
+    const NOT_BEFORE = `2023-${selectedMonth}-01`
+    const NOT_AFTER = `2023-${selectedMonth + 1}-01`
 
     const checkoutsByDate = groupReflogCheckoutsByDate(output, {
         dateFrom: NOT_BEFORE,
@@ -29,8 +37,9 @@ monthChooser.selectMonth().then(month => {
 
         console.log(`Day: ${date}${daySummary}`);
     });
+}
 
-})
+
 
 
 
