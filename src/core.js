@@ -1,5 +1,7 @@
 const monthChooser = require("./selectMonth");
 const execSync = require('child_process').execSync;
+require('dotenv').config();
+
 async function init(afterDate, shouldShowAll) {
     let selectedMonth;
     if (!afterDate && !shouldShowAll) {
@@ -97,7 +99,7 @@ function groupReflogCheckoutsByDate(reflogOutput, options) {
 }
 
 function extractReflog() {
-    return execSync('cd ../js-clients && git log --walk-reflogs --date=iso', { encoding: 'utf-8' });  // the default is 'buffer'
+    return execSync(`cd ${process.env.PROJECT_PATH} && git log --walk-reflogs --date=iso`, { encoding: 'utf-8' });  // the default is 'buffer'
 }
 
 module.exports = {
