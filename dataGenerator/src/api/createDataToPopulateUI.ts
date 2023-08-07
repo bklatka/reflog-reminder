@@ -32,7 +32,7 @@ function ensureDirectoryExist(dir) {
 }
 
 function saveDateGroupReportToAFile(fileName: string, report: string) {
-    ensureDirectoryExist("../output/app");
+    ensureDirectoryExist("output/app");
     fs.writeFileSync(fileName, report)
 }
 
@@ -48,5 +48,6 @@ function combineDataEntries() {
     sortDateGroup(fileContents);
 
 
-    saveDateGroupReportToAFile("output/combined.json", JSON.stringify(fileContents))
+    ensureDirectoryExist("../ui/src/data");
+    saveDateGroupReportToAFile("../ui/src/data/combined.json", JSON.stringify(fileContents))
 }
