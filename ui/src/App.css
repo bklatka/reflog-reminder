@@ -1,5 +1,8 @@
+* {
+  box-sizing: border-box;
+}
 .App {
-
+  background-color: #f5f5f5;
 }
 
 .App-logo {
@@ -14,12 +17,14 @@
 }
 
 .App-header {
-  background-color: #282c34;
+  /*background-color: ;*/
   min-height: 100vh;
   display: flex;
+  flex-direction: column;
+  align-items: center;
 
   font-size: 14px;
-  color: white;
+  color: #282c34;
 }
 
 .App-link {

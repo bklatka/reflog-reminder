@@ -1,18 +1,34 @@
-import React from 'react';
+import React, { useState } from 'react';
 import logo from './logo.svg';
 import './App.css';
-import data from './data/combined.json';
+import subWeeks from 'date-fns/subWeeks'
+import addWeeks from 'date-fns/addWeeks'
+
+import {
+    FluentProvider,
+    webLightTheme,
+} from "@fluentui/react-components";
+import { MainBoard } from "./features/mainBoard/mainBoard";
+import { WeekSelector } from "./features/weekSelector/weekSelector";
+
 
 function App() {
+    const [selectedWeek, setSelectedWeek] = useState(new Date());
   return (
-    <div className="App">
+      <FluentProvider theme={webLightTheme}>
+
+      <div className="App">
       <header className="App-header">
-        <pre>
-          {JSON.stringify(data, null ,2)}
-        </pre>
+          <WeekSelector
+              currentWeek={selectedWeek}
+              onNextWeek={() => setSelectedWeek(addWeeks(selectedWeek, 1))}
+              onPrevWeek={() => setSelectedWeek(subWeeks(selectedWeek, 1))}
+          />
+          <MainBoard selectedWeek={selectedWeek} />
 
       </header>
     </div>
+      </FluentProvider>
   );
 }
 

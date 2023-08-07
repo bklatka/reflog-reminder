@@ -1,0 +1,44 @@
+
+.mainBoard {
+  width:100%;
+  min-height: 600px;
+  border-radius:10px;
+  background-color: #f5f5f5;
+  display: grid;
+  grid-template-columns: 1fr 10px 1fr 10px 1fr 10px 1fr 10px 1fr 10px 1fr 10px 1fr;
+  margin:5rem 1rem 1rem;
+  padding:3rem;
+
+  align-items: stretch;
+  justify-content: space-between;
+}
+
+.column {
+  padding:1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+}
+
+.columnTitle {
+  margin-bottom:0.5rem;
+}
+
+.columnDate {
+  margin-bottom:3rem;
+}
+
+.columnCard {
+  margin:0.5rem 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.columnImg {
+  border-radius:50%;
+  width:50px;
+  height:50px;
+  margin:0;
+
+}

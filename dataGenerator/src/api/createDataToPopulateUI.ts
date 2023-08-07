@@ -10,7 +10,7 @@ const argv = argvInit(process.argv.slice(2));
 
 const beginningOfTheWeek = argv.afterDate ? new Date(argv.afterDate) : subWeeks(startOfWeek(new Date()), 1);
 
-extractHistory(beginningOfTheWeek).then(dateGroup => {
+extractHistory(beginningOfTheWeek, true).then(dateGroup => {
     const report = JSON.stringify(dateGroup);
 
     const fileName = generateFileName(beginningOfTheWeek);
