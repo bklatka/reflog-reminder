@@ -1,10 +1,10 @@
-import { extractHistory } from "./core";
+import { extractHistory } from "./logic/core";
 
 import * as fs from 'fs';
 import * as argvInit from "minimist";
 const argv = argvInit(process.argv.slice(2));
 import { startOfWeek, subWeeks } from "date-fns"
-import { generateDateGroupReport } from "./reportGenerator";
+import { generateDateGroupReport } from "./logic/reportGenerator";
 
 
 const beginningOfTheWeek = argv.afterDate ? new Date(argv.afterDate) : subWeeks(startOfWeek(new Date()), 1);

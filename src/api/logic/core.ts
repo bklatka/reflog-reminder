@@ -1,5 +1,5 @@
 import { selectMonth } from "./selectMonth";
-import { DateGroup, DayEntry } from "../types/dayEntries";
+import { DateGroup, DayEntry } from "../../types/dayEntries";
 
 const execSync = require('child_process').execSync;
 require('dotenv').config();
@@ -23,11 +23,11 @@ export async function extractHistory(afterDate?: Date, shouldShowAll?: boolean):
     });
 
 
-    return sortDateGroups(checkoutsByDate)
+    return sortDateGroup(checkoutsByDate)
 }
 
 
-function sortDateGroups(dateGroups: DateGroup): DateGroup {
+export function sortDateGroup(dateGroups: DateGroup): DateGroup {
     return Object.entries(dateGroups).sort((a,b) => {
         // sort by day
         return new Date(b[0]).getTime() - new Date(a[0]).getTime();

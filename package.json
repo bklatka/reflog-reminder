@@ -13,8 +13,9 @@
     "zlib": "^1.0.5"
   },
   "scripts": {
-    "start": "ts-node ./index.ts",
-    "weeklyRun": "ts-node ./src/api/extractThisWeek.ts"
+    "start": "ts-node src/api/printOnScreen.ts",
+    "weeklyRun": "ts-node ./src/api/extractThisWeek.ts",
+    "populateUI": "ts-node ./src/api/createDataToPopulateUI.ts"
   },
   "devDependencies": {
     "typescript": "^5.1.6"

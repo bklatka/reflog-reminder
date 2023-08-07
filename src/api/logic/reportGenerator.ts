@@ -1,4 +1,4 @@
-import { DateGroup, DayEntry } from "../types/dayEntries";
+import { DateGroup, DayEntry } from "../../types/dayEntries";
 
 export function generateDateGroupReport(dateGroup: DateGroup) {
     return Object.entries(dateGroup).reduce((report, [date, dayEntries]) => {

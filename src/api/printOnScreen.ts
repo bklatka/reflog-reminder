@@ -1,6 +1,6 @@
 const argv = require('minimist')(process.argv.slice(2));
 
-import { extractHistory} from "./src/api/core";
+import { extractHistory} from "./logic/core";
 
 
 /**
