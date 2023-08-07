@@ -1,6 +1,15 @@
-import { DayEntry } from "../../types/dayEntries";
+import { DayEntry, RangeDayEntry } from "../../types/dayEntries";
 import styles from "./styles.module.scss";
-import { Body1, Caption1, Caption2, Card, CardHeader, CardPreview } from "@fluentui/react-components";
+import {
+    Body1,
+    Caption1,
+    Caption1Stronger,
+    Caption2,
+    Caption2Strong,
+    Card,
+    CardHeader,
+    CardPreview
+} from "@fluentui/react-components";
 
 import Bg from '../../assets/bg/cool-background.png';
 import Bg1 from '../../assets/bg/cool-background-1.png';
@@ -18,6 +27,7 @@ import Id3 from '../../assets/bg/3.png';
 import Id4 from '../../assets/bg/4.png';
 import Id5 from '../../assets/bg/5.png';
 import { chooseRandomElementFromArray } from "../../utils/chooseRandomElementFromArray";
+import { formatDate, formatTime } from "../../utils/formatDate";
 
 
 const Bgs = [Bg, Bg1, Bg2, Bg3, Bg4, Bg5, Bg6, Bg7, Bg8, Bg9]
@@ -25,15 +35,16 @@ const Bgs = [Bg, Bg1, Bg2, Bg3, Bg4, Bg5, Bg6, Bg7, Bg8, Bg9]
 const IDs = [Id1, Id2, Id3, Id4, Id5];
 
 
-export const DataEntry = ({ dayEntry }: { dayEntry: DayEntry }) => {
+export const DataEntry = ({ dayEntry }: { dayEntry: RangeDayEntry }) => {
+    console.log(dayEntry);
 
-    const [jiraTicket, description] = parseTitle(dayEntry.checkoutTo);
+    const [jiraTicket, description] = parseTitle(dayEntry.description);
 
     return <Card className={styles.columnCard} orientation="vertical">
 
         <CardHeader
         header={<Body1><b>{jiraTicket}</b> <br/> {description}</Body1>}
-        description={<Caption2>OneDrive &gt; Documents</Caption2>}
+        description={<Caption1>{formatTime(dayEntry.startedFrom)} &gt; {formatTime(dayEntry.finishedAt)}</Caption1>}
         image={<figure className={styles.columnImg}><img
             className={styles.columnImg}
             src={chooseRandomElementFromArray(IDs)}

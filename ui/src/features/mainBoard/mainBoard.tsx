@@ -5,7 +5,7 @@ import { Divider } from "@fluentui/react-components";
 import { startOfWeek, endOfWeek, isWithinInterval, addDays } from 'date-fns'
 import data from '../../data/combined.json';
 import { pickBy } from "lodash";
-import { DayEntry } from "../../types/dayEntries";
+import { DateGroupRange, DayEntry, RangeDayEntry } from "../../types/dayEntries";
 import { formatDate } from "../../utils/formatDate";
 
 const CustomDivider = () => {
@@ -13,7 +13,7 @@ const CustomDivider = () => {
 }
 export const MainBoard = ({ selectedWeek }: { selectedWeek: Date} ) => {
 
-    const currentWeek = Object.entries(getWeekRange(selectedWeek));
+    const currentWeek: [string, RangeDayEntry[]][] = getWeekRange(selectedWeek);
     const beginningOfWeek = startOfWeek(selectedWeek, { weekStartsOn: 1 });
 
     return <section className={styles.mainBoard}>
@@ -33,14 +33,16 @@ export const MainBoard = ({ selectedWeek }: { selectedWeek: Date} ) => {
     </section>
 }
 
-function getWeekRange(currentDate: Date) {
+function getWeekRange(currentDate: Date): [string, RangeDayEntry[]][] {
 
     const beginningOfWeek = startOfWeek(currentDate, { weekStartsOn: 1 });
     const endingOfWeek = endOfWeek(currentDate, { weekStartsOn: 1 });
 
-
-    return pickBy(data, (value: DayEntry[], key: string) => {
-      const day = new Date(key);
-        return isWithinInterval(day, { start: beginningOfWeek, end: endingOfWeek });
+    return Object.entries(data as unknown as DateGroupRange)
+        .filter(([day]) => {
+        return isWithinInterval(new Date(day), { start: beginningOfWeek, end: endingOfWeek });
     })
+
+
+
 }

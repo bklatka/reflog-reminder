@@ -1,9 +1,9 @@
 import { Body1, Body1Strong, Body1Stronger, Card, CardHeader, Title2, Title3 } from "@fluentui/react-components";
 import styles from './styles.module.scss'
-import { DayEntry } from "../../types/dayEntries";
+import { DayEntry, RangeDayEntry } from "../../types/dayEntries";
 import { DataEntry } from "./DataEntry";
 
-export const Column = ({ name, date, data }: { name: string, date: string, data: DayEntry[] }) => {
+export const Column = ({ name, date, data }: { name: string, date: string, data: RangeDayEntry[] }) => {
 
 
     return <article className={styles.column}>
