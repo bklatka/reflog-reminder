@@ -1,11 +1,15 @@
-const monthChooser = require("./selectMonth");
+import { selectMonth } from "./selectMonth";
+import { DateGroup, DayEntry } from "../types/dayEntries";
+
 const execSync = require('child_process').execSync;
 require('dotenv').config();
 
-async function init(afterDate, shouldShowAll) {
+
+
+export async function extractHistory(afterDate?: Date, shouldShowAll?: boolean): Promise<DateGroup> {
     let selectedMonth;
     if (!afterDate && !shouldShowAll) {
-        selectedMonth = await monthChooser.selectMonth();
+        selectedMonth = await selectMonth();
     }
 
     const output = extractReflog();
@@ -19,18 +23,25 @@ async function init(afterDate, shouldShowAll) {
     });
 
 
-    return Object.entries(checkoutsByDate).sort((a,b) => {
-        // sort by day
-        return new Date(b[0]) - new Date(a[0]);
-    }).map(([date, dayData]) => {
-        sortDayEntries(dayData);
-
-        return [date, generateDaySummary(dayData)];
-    });
+    return sortDateGroups(checkoutsByDate)
 }
 
 
-function sortDayEntries(dayData) {
+function sortDateGroups(dateGroups: DateGroup): DateGroup {
+    return Object.entries(dateGroups).sort((a,b) => {
+        // sort by day
+        return new Date(b[0]).getTime() - new Date(a[0]).getTime();
+    }).map(([date, dayData]): [string, DayEntry[]] => {
+        // sort inside each day
+        sortDayEntries(dayData);
+
+        return [date, dayData];
+    }).reduce((acc, [date, dayEntries]) => ({ ...acc, [date]: dayEntries }), {});
+}
+
+
+
+function sortDayEntries(dayData: DayEntry[]) {
     dayData.sort((a,b) => {
         const aTime = Number(a.time.split(":").join(''));
         const bTime = Number(b.time.split(":").join(''));
@@ -38,19 +49,9 @@ function sortDayEntries(dayData) {
     })
 }
 
-function generateDaySummary(dayData) {
-    let lastEntry = "08:00:00";
-    return dayData.reduce((report, timeData) => {
-        const newReport = `${report}
-        ${lastEntry}\t${timeData.time}\t${timeData.checkoutTo}`
 
-        lastEntry = timeData.time;
 
-        return newReport;
-    }, "");
-}
-
-function groupReflogCheckoutsByDate(reflogOutput, options) {
+function groupReflogCheckoutsByDate(reflogOutput, options): DateGroup {
     const { dateFrom, dateTo } = options;
     const dateGroup = {};
 
@@ -80,14 +81,14 @@ function groupReflogCheckoutsByDate(reflogOutput, options) {
             return date.getTime() - new Date(dateFrom).getTime() >= 0;
         }
 
-        return  date.getTime() - new Date(dateFrom).getTime() >= 0 && date.getTime() - new Date(dateTo) <= 0;
+        return  date.getTime() - new Date(dateFrom).getTime() >= 0 && date.getTime() - new Date(dateTo).getTime() <= 0;
     })
         .forEach(data => {
             const targetCheckout = data.message.split(" to ")[1];
 
             const dayOfMessage = data.date[0]
 
-            /* Create date property if doesnt exist */
+            /* Create date property if it doesn't exist */
             if (!dateGroup[dayOfMessage]) {
                 dateGroup[dayOfMessage] = [];
             }
@@ -98,10 +99,8 @@ function groupReflogCheckoutsByDate(reflogOutput, options) {
     return dateGroup;
 }
 
+
+
 function extractReflog() {
     return execSync(`cd ${process.env.PROJECT_PATH} && git log --walk-reflogs --date=iso`, { encoding: 'utf-8' });  // the default is 'buffer'
-}
-
-module.exports = {
-    extractHistory: init,
 }
