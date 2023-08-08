@@ -1,0 +1,12 @@
+{
+  "name": "tempo-reminder",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:bklatka/reflog-reminder.git",
+  "author": "Bernard Klatka <bklatka@evolution.com>",
+  "license": "MIT",
+  "scripts": {
+    "start": "cd ui && yarn start",
+    "generate": "cd dataGenerator && yarn populateUI"
+  }
+}
