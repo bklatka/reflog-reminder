@@ -13,15 +13,15 @@ const argv = argvInit(process.argv.slice(2));
 const beginningOfTheWeek = argv.afterDate ? new Date(argv.afterDate) : subWeeks(startOfWeek(new Date()), 1);
 
 extractHistory(beginningOfTheWeek, true).then(dateGroup => {
-
-
-
-    const report = JSON.stringify(dateGroupToRangeDayEntry(dateGroup));
+    const report = JSON.stringify(dateGroupToRangeDayEntry(dateGroup), null, 2);
 
     const fileName = generateFileName(beginningOfTheWeek);
 
+    console.log('Generating file name for this week...');
+
 
     saveDateGroupReportToAFile(`output/app/${fileName}.json`, report)
+    console.log('Grouping all files into single file...');
     combineDataEntries();
 })
 
@@ -54,7 +54,7 @@ function combineDataEntries() {
 
 
     ensureDirectoryExist("../ui/src/data");
-    saveDateGroupReportToAFile("../ui/src/data/combined.json", JSON.stringify(fileContents))
+    saveDateGroupReportToAFile("../ui/src/data/combined.json", JSON.stringify(fileContents, null, 2))
 }
 
 
