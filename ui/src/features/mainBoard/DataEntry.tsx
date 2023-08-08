@@ -11,33 +11,30 @@ import {
     CardPreview
 } from "@fluentui/react-components";
 
-import Bg from '../../assets/bg/cool-background.png';
-import Bg1 from '../../assets/bg/cool-background-1.png';
-import Bg2 from '../../assets/bg/cool-background-2.png';
-import Bg3 from '../../assets/bg/cool-background-3.png';
-import Bg4 from '../../assets/bg/cool-background-4.png';
-import Bg5 from '../../assets/bg/cool-background-5.png';
-import Bg6 from '../../assets/bg/cool-background-6.png';
-import Bg7 from '../../assets/bg/cool-background-7.png';
-import Bg8 from '../../assets/bg/cool-background-8.png';
-import Bg9 from '../../assets/bg/cool-background-9.png';
+
 import Id1 from '../../assets/bg/1.png';
 import Id2 from '../../assets/bg/2.png';
 import Id3 from '../../assets/bg/3.png';
 import Id4 from '../../assets/bg/4.png';
 import Id5 from '../../assets/bg/5.png';
+import Id10 from '../../assets/bg/10.jpg';
+import Id11 from '../../assets/bg/11.jpg';
+import Id12 from '../../assets/bg/12.jpg';
+import Id13 from '../../assets/bg/13.jpg';
+import Id14 from '../../assets/bg/14.jpg';
+import Id15 from '../../assets/bg/15.jpg';
+import Id16 from '../../assets/bg/16.jpg';
+import Id17 from '../../assets/bg/17.jpg';
+
 import { chooseRandomElementFromArray } from "../../utils/chooseRandomElementFromArray";
 import { formatDate, formatTime } from "../../utils/formatDate";
 
 
-const Bgs = [Bg, Bg1, Bg2, Bg3, Bg4, Bg5, Bg6, Bg7, Bg8, Bg9]
 
-const IDs = [Id1, Id2, Id3, Id4, Id5];
+const IDs = [Id1, Id2, Id3, Id4, Id5, Id10, Id11, Id12, Id13, Id14, Id15, Id16, Id17];
 
 
 export const DataEntry = ({ dayEntry }: { dayEntry: RangeDayEntry }) => {
-    console.log(dayEntry);
-
     const [jiraTicket, description] = parseTitle(dayEntry.description);
 
     return <Card className={styles.columnCard} orientation="vertical">
