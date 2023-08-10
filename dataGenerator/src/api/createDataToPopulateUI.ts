@@ -65,18 +65,18 @@ export function dateGroupToRangeDayEntry(dateGroup: DateGroup): DateGroupRange {
         const rangeEntries: RangeDayEntry[] = []
 
         dayEntries.forEach((entry, idx) => {
-            if (idx === 0) {
+            if (idx + 1 >= dayEntries.length) {
                 rangeEntries.push({
-                    startedFrom: setHoursAndMinutes(new Date(day), START_WORK_TIME[0], START_WORK_TIME[1]),
-                    finishedAt: getDateFromTimeOfADay(day, entry.time),
+                    startedFrom: getDateFromTimeOfADay(day, entry.time),
+                    finishedAt: setHoursAndMinutes(new Date(day), END_WORK_TIME[0], END_WORK_TIME[1]),
                     description: entry.checkoutTo,
                 });
                 return;
             }
 
             rangeEntries.push({
-                startedFrom: rangeEntries[idx - 1].finishedAt,
-                finishedAt: getDateFromTimeOfADay(day, entry.time),
+                startedFrom: getDateFromTimeOfADay(day, entry.time),
+                finishedAt: getDateFromTimeOfADay(day, dayEntries[idx + 1].time),
                 description: entry.checkoutTo,
             });
         });
