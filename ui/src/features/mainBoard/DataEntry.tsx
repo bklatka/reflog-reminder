@@ -28,6 +28,7 @@ import Id17 from '../../assets/bg/17.jpg';
 
 import { chooseRandomElementFromArray } from "../../utils/chooseRandomElementFromArray";
 import { formatDate, formatTime } from "../../utils/formatDate";
+import { parseTitle } from "../../utils/parseTitle";
 
 
 
@@ -52,12 +53,3 @@ export const DataEntry = ({ dayEntry }: { dayEntry: RangeDayEntry }) => {
     </Card>
 }
 
-
-function parseTitle(title: string): [string, string] {
-    const [ticketGroup, ticketId, ...description] = title
-        .replaceAll('-', " ")
-        .replaceAll("_", " ")
-        .split(" ")
-
-    return [`${ticketGroup}-${ticketId}`, description.join(" ")];
-}
